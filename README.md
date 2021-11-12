@@ -463,10 +463,10 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 	</attrs>
 </replace>
 ```
-Внутри <replace> находятся строки <old> и блок <new>
-В <old> перечисляются блоки, которые надо заменить.
-Внутри <new> - чем заменить.
-Например:
+Element `<replace>` contains elements `<old>` and `<new>`.
+`<old>` enumerates blocks to be replaced and `<new>` contains replacement.
+
+Example:
 ```xml
 <root_Node>
 	<block className="ShipTreeElement">
@@ -481,16 +481,17 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 	</block>
 </root_Node>
 ```
-В блоке <block className="ShipTreeElement"> ищутся
-<bind name="action" value="'left_click'*"/>
-<bind name="menu" value="'ShipTreeMenu'*"/>
-и меняются на
-<bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>
-<bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>
-Количество <old> и блоков внутри <new> не обязательно должны совпадать. Каждая <old> заменится на содержимое <new>
+In block `<block className="ShipTreeElement">` we search for:
+`<bind name="action" value="'left_click'*"/>` and
+`<bind name="menu" value="'ShipTreeMenu'*"/>`
+And then they are replaced by
+`<bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>` and
+`<bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>`
+The number of sub elements of `<old>` and `<new>` might not be the same. Each `<old>` will be replaced with `<new>` contents.
 
-Если необходимо заменить не одну, а все найденные строки, то можно использовать атрибут recursive.
-Например:
+When all elements need to be replaced including sub elements you may use attribute `recursive="true"`.
+
+Example:
 ```xml
 <root_Node>
 	<block className="SimpleUIListTeamResultRowRendererLeft">
@@ -503,33 +504,31 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 	</block>
 </root_Node>
 ```
-Заменит все <height value="28px"/>, найденные в <block className="SimpleUIListTeamResultRowRendererLeft">, на <height value="30px"/>
+Will replace all `<height value="28px"/>` in the block `<block className="SimpleUIListTeamResultRowRendererLeft">` to `<height value="30px"/>`
 
-
-### 4.2.4 Действие <copy_past>
+### 4.2.4 Action `<copy_past>`
 ```xml
 <root_Node>
-	<основной_путь>
+	<a_main_path>
 		<copy_past>
 			<copy>
-				<путь>
-					<путь/>
-				</путь>
-				<путь>
-					<путь/>
-				</путь>
+				<a_path_1>
+					<a_path_2/>
+				</a_path_1>
+				<a_path_3>
+					<a_path_4/>
+				</a_path_3>
 			</copy>
 			<attrs>
 				...
 			</attrs>
 		</copy_past>
-	</основной_путь>
+	</a_main_path>
 </root_Node>
 ```
-Внутри <copy> указывается путь (либо пути) к блоку (блокам), которые надо скопировать. Правила те же, что и для <основной_путь>,
-за исключением того, что корневой блок не <root_Node>, а <copy>.
-Всё скопированное будет вставлено в <основной_путь>, с поправкой на <position>, если она есть.
-Например:
+In the `<copy>` element there are path (or paths) to a block (or blocks) which will be copied. Same rules applied as to `<a_main_path>` taking `<copy>` element as a root block instead of `<root_Node>`. All copied content will be inserted into `<a_main_path>` element taking into account a `<position>` if there is one presents.
+
+Example 1:
 ```xml
 <root_Node>
 	<block className="AccountLevelShortBanner">
@@ -540,13 +539,13 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 				</block>
 			</copy>
 			<attrs>
-				<position insert="before_node" tag="bind" attr_1="name" value_1="catch" value_2="'onLostTop'">
+				<position insert="before_node" tag="bind" attr_1="name" value_1="catch" value_2="'onLostTop'" />
 			</attrs>
 		</copy_past>
 	</block>
 </root_Node>
 ```
-Скопирует из <block className="AccountLevelBanner">
+Will copy contents of  `<block className="AccountLevelBanner">`
 ```xml
 <block className="mc_blurmap_medium" type="native">
 	<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
@@ -555,9 +554,9 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 	<bind name="blurMap" value="0"/>
 </block>
 ```
-и вставит его в <block className="AccountLevelShortBanner">, перед <bind name="catch" value="'onLostTop'; { isOnTop: false }"/>
+to the `<block className="AccountLevelShortBanner">` element right before `<bind name="catch" value="'onLostTop'; { isOnTop: false }"/>`
 
-А такой вариант:
+Example 2:
 ```xml
 <root_Node>
 	<copy_past>
@@ -567,13 +566,15 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 			</block>
 		</copy>
 		<attrs>
-			<position insert="top">
+			<position insert="top" />
 			<cut/>
 		</attrs>
 	</copy_past>
 </root_Node>
 ```
-вырежет блок <block className="ShipExtendedTooltip"> и вставит его в начало файла.
+Will cut `<block className="ShipExtendedTooltip">` and insert it into the beginning of the file.
+
+Example 3:
 ```xml
 <root_Node>
 	<block className="AccountLevelShortBanner">
@@ -590,9 +591,10 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 	</block>
 </root_Node>
 ```
-найдёт в <block className="AccountLevelBanner">
-блок, содержащий <bind name="tooltip" value="'PromoBannerTooltip'; isShowPromoRewardBanner ? {} : null"/>
-и вставит его в <block className="AccountLevelShortBanner">, перед <bind name="catch" value="'onLostTop'; { isOnTop: false }"/>
+Will find element `<block className="AccountLevelBanner">`
+which contains `<bind name="tooltip" value="'PromoBannerTooltip'; isShowPromoRewardBanner ? {} : null"/>` and then will insert `<block className="AccountLevelShortBanner">` before `<bind name="catch" value="'onLostTop'; { isOnTop: false }"/>`
+
+Example 4:
 ```xml
 <target_File file="gui/unbound/mods/Roslich_loading_screen.xml" clear="true">
 	<root_Node>
@@ -609,14 +611,13 @@ If there is no sub string "Roslich_icons.xml" then insert will be to the beginni
 				<rename attr_rename="className" old_value="TeamBattlePage" new_value="R_TeamBattlePage"/>
 			</attrs>
 		</copy_past>
-	<root_Node>
+	</root_Node>
 </target_File>
 ```
-Скопирует из оригинального markup.xml пять блоков, перечисленных в <copy>,
-вставит их в конец файла "gui/unbound/mods/Roslich_loading_screen.xml"
-и переименует <block className="BattleStats"/> в <block className="R_TeamBattlePage"/>
+Will copy five blocks from the original markup.xml enumerated in the `<copy>` and will insert them into the end of the file "gui/unbound/mods/Roslich_loading_screen.xml".
+Also the element `<block className="BattleStats"/>` will be renamed to `<block className="R_TeamBattlePage"/>`
 
-### 4.2.5 Действие <rename>
+### 4.2.5 Action `<rename>`
 ```xml
 <rename tag="" attr_1="" value_1="".../>
 ```
