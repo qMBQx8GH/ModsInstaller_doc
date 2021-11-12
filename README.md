@@ -237,58 +237,61 @@ Will return
 
 ## 3.1 A path element attributes
 
-		На выполнение <путь> влияют атрибуты, указанные в его <attrs>. Выглядит это следующим образом:
-		
-		<путь>
-			<путь>
-				<attrs>
-					...
-				</attrs>
-			</путь>
+You may specify some attributes in the `<attrs>` tag.
+
+Example:
+```xml
+<a_path>
+	<a_path>
+		<attrs>
+			...
+		</attrs>
+	</a_path>
+	<attrs>
+		...
+	</attrs>
+</a_path>
+```
+Possible elements inside `<attrs>`:
+- `<do_if_mod_installed mod=""/>` - checks if a mod desribed in `<check>` is installed.
+- `<do_if_mod_not_installed mod=""/>` - checks if a mod desribed in `<check>` is not installed.
+- `<do_if_exist tag="" attr_1="" ... />` - checks for a block descibed in their `tag=""`, `attr_1=""`, etc.
+- `<do_if_not_exist tag="" attr_1="" ... />`
+
+Example 1:
+```xml
+<check name="campaigns_in_battle" version="1.0">
+	<loading_screen file="Roslich_loading_screen.xml" />
+</check>
+
+<target_File file="gui/unbound/mods/Roslich_loading_screen.xml">
+	<root_Node>
+		...
+		<attrs>
+			<do_if_mod_installed mod="loading_screen"/>
+		</attrs>
+	</root_Node>
+</target_File>
+```
+Will make changes to the file gui/unbound/mods/Roslich_loading_screen.xml only when there is mod  loading_screen described in the `<check>` element is installed.
+Example 2:
+```xml
+<target_File file="gui/unbound/mods/Roslich_loading_screen.xml">
+	<root_Node>
+		<block className="BattleStats">
+			...
 			<attrs>
-				...
+				<do_if_exist tag="block" attr_1="className" value_1="BattleLoading"/>
 			</attrs>
-		</путь>
-		
-		Внутри <attrs> могут быть:
-		<do_if_mod_installed mod=""/>
-		<do_if_mod_not_installed mod=""/>
-		<do_if_exist tag="" attr_1="" ... />
-		<do_if_not_exist tag="" attr_1="" ... />
-		
-		<do_if_mod_installed/> и <do_if_mod_not_installed/> проверяют, установлен ли мод, описанный в <check>
-		<do_if_exist> и <do_if_not_exist> проверяют наличие блока, описанного в их tag="" attr_1="" ...
-		
-		Например:
-		<check name="campaigns_in_battle" version="1.0">
-			<loading_screen file="Roslich_loading_screen.xml">
-		</check>
-		
-		<target_File file="gui/unbound/mods/Roslich_loading_screen.xml">
-			<root_Node>
-				...
-				<attrs>
-					<do_if_mod_installed mod="loading_screen"/>
-				</attrs>
-			</root_Node>
-		</target_File>	
-		Внесёт изменения в файл gui/unbound/mods/Roslich_loading_screen.xml, только если установлен мод loading_screen, описанный в блоке <check>
+		</block>
+	</root_Node>
+</target_File>
+```
+Will take actions from `<block className="BattleStats">` only when there is a block `<block className="BattleLoading">` exists in the file being changed.
 
-		<target_File file="gui/unbound/mods/Roslich_loading_screen.xml">
-			<root_Node>
-				<block className="BattleStats">
-					...
-					<attrs>
-						<do_if_exist tag="block" attr_1="className" value_1="BattleLoading"/>
-					</attrs>
-				</block>
-			</root_Node>
-		</target_File>	
-		Будет выполнять действия в <block className="BattleStats"> , только если в редактируемом файле существует <block className="BattleLoading">
+# 4. Actions
 
-4.	Действия
-		
-		Все действия ведутся относительно того блока, на котором в данный момент закончился <путь>
+Все действия ведутся относительно того блока, на котором в данный момент закончился <путь>
 
 		Возможные действия:
 		<remove>		Удаление блоков
