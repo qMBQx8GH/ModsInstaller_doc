@@ -84,7 +84,7 @@ searches installed_mods.xml for a block
 <mod name="campaigns_in_battle" version="1.0"/>
 ```
 When mod installation succeeds then this element will be automatically added to the installed_mods.xml.
-When you debug a mod you may add attribute dev="true", this will disble version check and the mod will be installed.
+When you debug a mod you may add attribute dev="true", this will disable version check and the mod will be installed.
 
 Example:
 ```xml
@@ -100,7 +100,7 @@ This instruction looks like:
 ```
 where
 - "name" - mod name to be referenced in the future checks.
-- "string" - substring to lookup in the file "uss_settings.xml". A mod is consered installed in case the substring is found.
+- "string" - sub string to lookup in the file "uss_settings.xml". A mod is considered installed in case the sub string is found.
 
 Example:
 ```xml
@@ -108,15 +108,15 @@ Example:
 	<loading_screen file="Roslich_loading_screen.xml"/>
 </check>
 ```
-This code will search for "Roslich_loading_screen.xml" substring in the file "uss_settings.xml".
+This code will search for "Roslich_loading_screen.xml" sub string in the file "uss_settings.xml".
 In this particular case the string  `<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>` will match because it contains "Roslich_loading_screen.xml".
 
-After the mod install the information about installation of the mods which are depended is saved as well.
+After the mod install the information about installation of the mods which are depended on is saved as well.
 If during the check it turns out that the mod is installed, but there is a mod was added on which it depends then whole mod is reinstalled.
 
-So at the start the installation we find out the status of the mod and mod on which it depeneds.
+So at the start the installation we find out the status of the mod and mod on which it depends.
 If mod is not installed or there is older version present then installation is started.
-If mod is installed and version is ok but a mod was added on which it depeds then installation is started as well.
+If mod is installed and version is ok but a mod was added on which it depends then installation is started as well.
 
 During the installation process executes all code with no attributes `<do_if_mod_installed/>` and `<do_if_mod_not_installed/>` (details will follow).
 Code in the `<do_if_mod_installed mod="a mod name the the check" />` element is executed as well in case the specified mod is installed.
@@ -149,18 +149,18 @@ Example:
 </target_File>
 ```
 Changes will be applied to the uss_settings.xml and Roslich_loading_screen.xml files.
-In case they do not exists they will be created. First we try to open ann existing file. In case we fail we will try to unpack the file from the client. If such file does not exists in the client then empty one will be created.
+In case they do not exists they will be created. First we try to open an existing file. In case we fail we will try to unpack the file from the client. If such file does not exist in the client then empty one will be created.
 You may use `<target_File file="gui/unbound/mods/Roslich_loading_screen.xml" clear="true">` then we will not try open or unpack file. It will be created as empty. This is useful for the main file of the mod.
 
-# 3. A path element
+# 3. A path element.
 
-`<root_Node>` matches to the root node of an xml file. For markup.xml this is `<ui>`, for battle_elements.xml is `<battle_elements.xml>`.
-All `<path>` elements are reletive to this one.
+`<root_Node>` matches to the root node of a xml file. For markup.xml this is `<ui>`, for battle_elements.xml is `<battle_elements.xml>`.
+All `<path>` elements are relative to this one.
 
 In the `<path>` element you may use full block names (for example `<block className="ShipTreeShortElement">`).
 If there are a couple identical blocks (with no attributes, or with the same attributes and you need to hit not the first one)
 You may specify it's order number in it's parent. Example `<block number="2">`
-The search performs onle one level deep.
+The search performs only one level deep.
 
 If you need to find a block deeper and there is no desire, or the ability to indicate all the steps of the path, then you can search for a block by its contents (in this case, the search goes to the full depth):
 `<find_node tag="" attr_1="" value_1="" strict_1="" attr_2="" value_2="" strict_2="" text="" strict_text="" sub_nodes="" recursive="">`
@@ -170,16 +170,16 @@ where
 - `tag=""` - a block tag
 - `attr_1=""` - the first attribute name
 - `value_1=""` - the first attribute value
-- `strict_1=""` - how strict the search is (true - full match, false - substring search). By default is false.
+- `strict_1=""` - how strict the search is (true - full match, false - sub string search). By default, is false.
 - `attr_2=""` - the second attribute name
 - `value_2=""` - the second attribute value
-- `strict_2=""` - how strict the search is (true - full match, false - substring search). By default is false.
+- `strict_2=""` - how strict the search is (true - full match, false - sub string search). By default, is false.
 - `text=""` - a text node value (for example in uss_settings.xml this would be "../unbound/styles.xml")
-- `strict_text=""` - how strict the search is (true - full match, false - substring search). By default is false.
-- `sub_nodes=""` - depth of the search (true - recursive search in all children, false - only one level deep). By default true
+- `strict_text=""` - how strict the search is (true - full match, false - sub string search). By default, is false.
+- `sub_nodes=""` - depth of the search (true - recursive search in all children, false - only one level deep). By default, true
 - `recursive=""` - true, to find all blocks that meet the criteria, false - only the first.
 
-By default `attr_2="value"`, that is why code
+By default, `attr_2="value"`, that is why code
 ```xml
 <find_parent tag="bind" attr_1="name" value_1="instance" attr_2="value" value_2="TaskItemHeader">
 ```
@@ -253,9 +253,9 @@ Example:
 </a_path>
 ```
 Possible elements inside `<attrs>`:
-- `<do_if_mod_installed mod=""/>` - checks if a mod desribed in `<check>` is installed.
-- `<do_if_mod_not_installed mod=""/>` - checks if a mod desribed in `<check>` is not installed.
-- `<do_if_exist tag="" attr_1="" ... />` - checks for a block descibed in their `tag=""`, `attr_1=""`, etc.
+- `<do_if_mod_installed mod=""/>` - checks if a mod described in `<check>` is installed.
+- `<do_if_mod_not_installed mod=""/>` - checks if a mod described in `<check>` is not installed.
+- `<do_if_exist tag="" attr_1="" ... />` - checks for a block described in their `tag=""`, `attr_1=""`, etc.
 - `<do_if_not_exist tag="" attr_1="" ... />`
 
 Example 1:
@@ -293,11 +293,11 @@ Will take actions from `<block className="BattleStats">` only when there is a bl
 
 All actions takes place relative to the block on which `<a_path>` has ended.
 Possible actions:
-- `<remove>` - Blocks removal
-- `<insert>` - Blocks addition
-- `<replace>` - Blocks replacement
-- `<rename>` - Rename attributes in existing blocks
-- `<copy_past>` - Copy or Move some blocks
+- `<remove>` - Blocks removal;
+- `<insert>` - Blocks addition;
+- `<replace>` - Blocks replacement;
+- `<rename>` - Rename attributes in existing blocks;
+- `<copy_past>` - Copy or Move some blocks;
 
 All actions execute in the order they appear in the file.
 
@@ -338,7 +338,7 @@ Possible values are:
  - before_parent - before the parent of the block
  - after_parent - after the parent of the block
  - top - in the beginning of the block
- - no `<position/>` specifed - the very end of the block
+ - no `<position/>` specified - the very end of the block
 
 3. `<default_position/>` is the same as `<position/>` and used in case there is no `<position/>` specified.
 
@@ -349,9 +349,9 @@ Possible values are:
 5. `<do_if_not_exist/>` makes the action happen only when there is NO block found which is described in this element.
 This might be used to modify uss_settings.xml. Describe a string to be inserted only when it is not in the file yet.
 
-6. `<do_if_mod_installed/>` the action will take place only when speicific mod `mod=""` is installed. The `mod=""` attribute should contain mod name from a `<check/>` element.
+6. `<do_if_mod_installed/>` the action will take place only when specific mod `mod=""` is installed. The `mod=""` attribute should contain mod name from a `<check/>` element.
 
-7. `<do_if_mod_not_installed/>` same as above but mod NON existsnce is checked.
+7. `<do_if_mod_not_installed/>` same as above but mod NON existence is checked.
 
 8. `<copy_from/>` used by `<copy_past>` element as a source file. If there is no `<copy_past>` element then current file is used as a source. If `orig="true"` attribute is present copy action will use original "clean" file from the game client. Otherwise we'll try to read current file and in case of failure we'll try to get from the game client. And if this fail an error will be logged and mod install will be skipped.
 
@@ -376,7 +376,7 @@ is equal to:
 	...
 </an_action>
 ```
-If `<log_info>` and `<position>` are spicified in both `<attrs>` and in `<an_action>` then those from `<attrs>` element will take precedence.
+If `<log_info>` and `<position>` are specified in both `<attrs>` and in `<an_action>` then those from `<attrs>` element will take precedence.
 
 ## 4.2 Action types
 
@@ -400,7 +400,7 @@ Example 2:
 	<remove tag="block" attr_1="className" value_1="BattleLoading" recursive="true" sub_nodes="false"/>
 </root_Node>
 ```
-Will delete all blocks `<block className="MinimapShipItem">` found in whole file, but blocks ` <block className="BattleLoading">` only from `<ui>` element without searching then in subelements.
+Will delete all blocks `<block className="MinimapShipItem">` found in whole file, but blocks ` <block className="BattleLoading">` only from `<ui>` element without searching then in sub elements.
 
 Example 3:
 ```xml
@@ -425,7 +425,7 @@ Will delete a whole block which contains `<bind name="tooltip" value="'SlimClien
 	</attrs>
 </insert>
 ```
-Inside `<insert>` element there blocks to be added. By the default they are inserted to the end of the block on whish a path ends. You may use elements `<position/>` and `<default_position/>` to control this behaviour.
+Inside `<insert>` element there blocks to be added. By the default they are inserted to the end of the block on which a path ends. You may use elements `<position/>` and `<default_position/>` to control this behaviour.
 Example:
 ```xml
 <target_File file="gui/uss_settings.xml">
@@ -445,7 +445,7 @@ Example:
 </target_File>
 ```
 If there is a string "../unbound/mods/Roslich_loading_screen.xml" found no action will take place. Otherwise just before `<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>` there will be `<insert>` content added: `<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>` and `<swffile>../unbound/flash/Roslich_loading_screen.swf</swffile>`
-If there is no substring "Roslich_icons.xml" then insert will be to the beginning of the `<mods>` element.
+If there is no sub string "Roslich_icons.xml" then insert will be to the beginning of the `<mods>` element.
 
 ### 4.2.3 Action `<replace>`
 ```xml
@@ -463,9 +463,9 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</attrs>
 </replace>
 ```
-Внутри `<replace>` находятся строки `<old>` и блок `<new>`
-В `<old>` перечисляются блоки, которые надо заменить.
-Внутри `<new>` - чем заменить.
+Внутри <replace> находятся строки <old> и блок <new>
+В <old> перечисляются блоки, которые надо заменить.
+Внутри <new> - чем заменить.
 Например:
 ```xml
 <root_Node>
@@ -481,17 +481,13 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</block>
 </root_Node>
 ```
-В блоке `<block className="ShipTreeElement">` ищутся
-```xml
+В блоке <block className="ShipTreeElement"> ищутся
 <bind name="action" value="'left_click'*"/>
 <bind name="menu" value="'ShipTreeMenu'*"/>
-```
 и меняются на
-```xml
 <bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>
 <bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>
-```
-Количество `<old>` и блоков внутри `<new>` не обязательно должны совпадать. Каждая `<old>` заменится на содержимое `<new>`
+Количество <old> и блоков внутри <new> не обязательно должны совпадать. Каждая <old> заменится на содержимое <new>
 
 Если необходимо заменить не одну, а все найденные строки, то можно использовать атрибут recursive.
 Например:
@@ -507,9 +503,10 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</block>
 </root_Node>
 ```
-Заменит все `<height value="28px"/>`, найденные в `<block className="SimpleUIListTeamResultRowRendererLeft">`, на `<height value="30px"/>`
+Заменит все <height value="28px"/>, найденные в <block className="SimpleUIListTeamResultRowRendererLeft">, на <height value="30px"/>
 
-### 4.2.4 Действие `<copy_past>`
+
+### 4.2.4 Действие <copy_past>
 ```xml
 <root_Node>
 	<основной_путь>
@@ -529,9 +526,9 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</основной_путь>
 </root_Node>
 ```
-Внутри `<copy>` указывается путь (либо пути) к блоку (блокам), которые надо скопировать. Правила те же, что и для `<основной_путь>`,
-за исключением того, что корневой блок не `<root_Node>`, а `<copy>`.
-Всё скопированное будет вставлено в `<основной_путь>`, с поправкой на `<position>`, если она есть.
+Внутри <copy> указывается путь (либо пути) к блоку (блокам), которые надо скопировать. Правила те же, что и для <основной_путь>,
+за исключением того, что корневой блок не <root_Node>, а <copy>.
+Всё скопированное будет вставлено в <основной_путь>, с поправкой на <position>, если она есть.
 Например:
 ```xml
 <root_Node>
@@ -549,7 +546,7 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</block>
 </root_Node>
 ```
-Скопирует из `<block className="AccountLevelBanner">`
+Скопирует из <block className="AccountLevelBanner">
 ```xml
 <block className="mc_blurmap_medium" type="native">
 	<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
@@ -558,7 +555,7 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	<bind name="blurMap" value="0"/>
 </block>
 ```
-и вставит его в `<block className="AccountLevelShortBanner">`, перед `<bind name="catch" value="'onLostTop'; { isOnTop: false }"/>`
+и вставит его в <block className="AccountLevelShortBanner">, перед <bind name="catch" value="'onLostTop'; { isOnTop: false }"/>
 
 А такой вариант:
 ```xml
@@ -576,7 +573,7 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</copy_past>
 </root_Node>
 ```
-вырежет блок `<block className="ShipExtendedTooltip">` и вставит его в начало файла.
+вырежет блок <block className="ShipExtendedTooltip"> и вставит его в начало файла.
 ```xml
 <root_Node>
 	<block className="AccountLevelShortBanner">
@@ -593,9 +590,9 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</block>
 </root_Node>
 ```
-найдёт в `<block className="AccountLevelBanner">`
-блок, содержащий `<bind name="tooltip" value="'PromoBannerTooltip'; isShowPromoRewardBanner ? {} : null"/>`
-и вставит его в `<block className="AccountLevelShortBanner">`, перед `<bind name="catch" value="'onLostTop'; { isOnTop: false }"/>`
+найдёт в <block className="AccountLevelBanner">
+блок, содержащий <bind name="tooltip" value="'PromoBannerTooltip'; isShowPromoRewardBanner ? {} : null"/>
+и вставит его в <block className="AccountLevelShortBanner">, перед <bind name="catch" value="'onLostTop'; { isOnTop: false }"/>
 ```xml
 <target_File file="gui/unbound/mods/Roslich_loading_screen.xml" clear="true">
 	<root_Node>
@@ -612,20 +609,20 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 				<rename attr_rename="className" old_value="TeamBattlePage" new_value="R_TeamBattlePage"/>
 			</attrs>
 		</copy_past>
-	</root_Node>
+	<root_Node>
 </target_File>
 ```
-Скопирует из оригинального markup.xml пять блоков, перечисленных в `<copy>`,
+Скопирует из оригинального markup.xml пять блоков, перечисленных в <copy>,
 вставит их в конец файла "gui/unbound/mods/Roslich_loading_screen.xml"
-и переименует `<block className="BattleStats"/>` в `<block className="R_TeamBattlePage"/>`
+и переименует <block className="BattleStats"/> в <block className="R_TeamBattlePage"/>
 
-### 4.2.5 Действие `<rename>`
+### 4.2.5 Действие <rename>
 ```xml
 <rename tag="" attr_1="" value_1="".../>
 ```
-Ищет блок (`tag="" attr_1="" value_1=""...`) и заменяет в значении `attr_rename`, `old_value` на `new_value`
-Если `old_value` не указан, то `attr_rename` примет значение `new_value`
-Если у блока (`tag="" attr_1="" value_1=""...`) нет атрибута `attr_rename`, то такой атрибут будет создан
+Ищет блок (tag="" attr_1="" value_1=""...) и заменяет в значении attr_rename, old_value на new_value
+Если old_value не указан, то attr_rename примет значение new_value
+Если у блока (tag="" attr_1="" value_1=""...) нет атрибута attr_rename, то такой атрибут будет создан
 например:
 ```xml
 <root_Node>
@@ -634,7 +631,7 @@ If there is no substring "Roslich_icons.xml" then insert will be to the beginnin
 	</block>
 </root_Node>
 ```
-находит в `<block className="BattleLoading">` все блоки `<bind name="instance" value="blablabla _width: '421px' blablabla">`, содержащие в атрибуте value строку `'421px'` и меняет в них `'421px'` на `'100%'`.
+находит в <block className="BattleLoading"> все блоки <bind name="instance" value="blablabla _width: '421px' blablabla">, содержащие в атрибуте value строку '421px' и меняет в них '421px' на '100%'.
 В итоге, вместо
 ```xml
 <bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '421px', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
