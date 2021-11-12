@@ -414,222 +414,251 @@ Example 3:
 ```
 Will delete a whole block which contains `<bind name="tooltip" value="'SlimClientStatusProfileTooltip'; slimClientData.isFull ? null : {}"/>`
 
-4.2.2	Действие <insert>
-
-		<insert>
-			<вставляемые_блоки/>
-			...
-			<вставляемые_блоки/>
-			<attrs>
-				...
-			</attrs>
-		</insert>
-		Внутри <insert> находятся блоки, которые необходимо добавить. По умолчанию они добавляются в конец блока, на котором закончился путь.
-		Для уточнения места, куда надо добавлять блоки, используется атрибуты <position/> и <default_position/>
-		Например:
-		<target_File file="gui/uss_settings.xml">
-			<root_Node>
-				<mods>
-					<insert>
-						<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>
-						<swffile>../unbound/flash/Roslich_loading_screen.swf</swffile>
-						<attrs>
-							<position insert="before_node" attr_1="xmlfile" text="Roslich_icons.xml"/>
-							<default_position insert="top"/>
-							<do_if_not_exist attr_1="xmlfile" text="../unbound/mods/Roslich_loading_screen.xml"/>
-						</attrs>
-					</insert>
-				</mods>
-			</root_Node>
-		</target_File>
-		если в файле будет найдена строка, содержащая "../unbound/mods/Roslich_loading_screen.xml", то ничего вставляться не будет.
-		Если строки нет, то перед <xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile> добавится содержимое <insert>,
-		то есть <xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile> и <swffile>../unbound/flash/Roslich_loading_screen.swf</swffile>
-		Если не будет найдена строка с текстом "Roslich_icons.xml", то вставка произойдёт в начало блока <mods>
-
-4.2.3	Действие <replace>
-
-		<replace>
-			<old tag="" attr_1="" value_1="".../>
-			...
-			<old tag="" attr_1="" value_1="".../>
-			<new>
-				<вставляемые_блоки/>
-				...
-				<вставляемые_блоки/>
-			</new>
-			<attrs>
-				...
-			</attrs>
-		</replace>
-		Внутри <replace> находятся строки <old> и блок <new>
-		В <old> перечисляются блоки, которые надо заменить.
-		Внутри <new> - чем заменить.
-		Например:
-		<root_Node>
-			<block className="ShipTreeElement">
-				<replace>
-					<old tag="bind" attr_1="name" value_1="action" value_2="'left_click'"/>
-					<old tag="bind" attr_1="name" value_1="menu" value_2="'ShipTreeMenu'"/>
-					<new>
-						<bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>
-						<bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>
-					</new>
-				</replace>
-			</block>
-		</root_Node>
-
-		В блоке <block className="ShipTreeElement"> ищутся
-		<bind name="action" value="'left_click'*"/>
-		<bind name="menu" value="'ShipTreeMenu'*"/>
-		и меняются на
-		<bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>
-		<bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>
-		Количество <old> и блоков внутри <new> не обязательно должны совпадать. Каждая <old> заменится на содержимое <new>
-
-		Если необходимо заменить не одну, а все найденные строки, то можно использовать атрибут recursive.
-		Например:
-		<root_Node>
-			<block className="SimpleUIListTeamResultRowRendererLeft">
-				<replace>
-					<old tag="height" value_2="28px" recursive="true"/>
-					<new>
-						<height value="30px"/>
-					</new>
-				</replace>
-			</block>
-		</root_Node>
-		Заменит все <height value="28px"/>, найденные в <block className="SimpleUIListTeamResultRowRendererLeft">, на <height value="30px"/>
-
-
-4.2.4	Действие <copy_past>
-
-		<root_Node>
-			<основной_путь>
-				<copy_past>
-					<copy>
-						<путь>
-							<путь/>
-						</путь>
-						<путь>
-							<путь/>
-						</путь>
-					</copy>
-					<attrs>
-						...
-					</attrs>
-				</copy_past>
-			</основной_путь>
-		</root_Node>
-
-		Внутри <copy> указывается путь (либо пути) к блоку (блокам), которые надо скопировать. Правила те же, что и для <основной_путь>,
-		за исключением того, что корневой блок не <root_Node>, а <copy>.
-		Всё скопированное будет вставлено в <основной_путь>, с поправкой на <position>, если она есть.
-		Например:
-		<root_Node>
-			<block className="AccountLevelShortBanner">
-				<copy_past>
-					<copy>
-						<block className="AccountLevelBanner">
-							<find_node tag="block" attr_1="className" value_1="mc_blurmap_medium"/>
-						</block>
-					</copy>
-					<attrs>
-						<position insert="before_node" tag="bind" attr_1="name" value_1="catch" value_2="'onLostTop'">
-					</attrs>
-				</copy_past>
-			</block>
-		</root_Node>
-		Скопирует из <block className="AccountLevelBanner">
-		<block className="mc_blurmap_medium" type="native">
-			<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
-			<bind name="appear" value="'startHide'; 0.15; 0; {alpha: 1}; {alpha: 0}"/>
-			<styleClass value="$FullsizeAbsolute"/>
-			<bind name="blurMap" value="0"/>
-		</block>
-		и вставит его в <block className="AccountLevelShortBanner">, перед <bind name="catch" value="'onLostTop'; { isOnTop: false }"/>
-
-		А такой вариант:
-		<root_Node>
-			<copy_past>
-				<copy>
-					<block className="AccountLevelBanner">
-						<find_node tag="block" attr_1="className" value_1="ShipExtendedTooltip"/>
-					</block>
-				</copy>
+### 4.2.2 Action `<insert>`
+```xml
+<insert>
+	<a_block_to_be_inserted_1/>
+	...
+	<a_block_to_be_inserted_n/>
+	<attrs>
+		...
+	</attrs>
+</insert>
+```
+Inside `<insert>` element there blocks to be added. By the default they are inserted to the end of the block on whish a path ends. You may use elements `<position/>` and `<default_position/>` to control this behaviour.
+Example:
+```xml
+<target_File file="gui/uss_settings.xml">
+	<root_Node>
+		<mods>
+			<insert>
+				<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>
+				<swffile>../unbound/flash/Roslich_loading_screen.swf</swffile>
 				<attrs>
-					<position insert="top">
-					<cut/>
+					<position insert="before_node" attr_1="xmlfile" text="Roslich_icons.xml"/>
+					<default_position insert="top"/>
+					<do_if_not_exist attr_1="xmlfile" text="../unbound/mods/Roslich_loading_screen.xml"/>
 				</attrs>
-			</copy_past>
-		</root_Node>
-		вырежет блок <block className="ShipExtendedTooltip"> и вставит его в начало файла.
+			</insert>
+		</mods>
+	</root_Node>
+</target_File>
+```
+If there is a string "../unbound/mods/Roslich_loading_screen.xml" found no action will take place. Otherwise just before `<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>` there will be `<insert>` content added: `<xmlfile>../unbound/mods/Roslich_loading_screen.xml</xmlfile>` and `<swffile>../unbound/flash/Roslich_loading_screen.swf</swffile>`
+If there is no substring "Roslich_icons.xml" then insert will be to the beginning of the `<mods>` element.
 
-		<root_Node>
-			<block className="AccountLevelShortBanner">
-				<copy_past>
-					<copy>
-						<block className="AccountLevelBanner">
-							<find_parent tag="bind" attr_1="name" value_1="tooltip" value_2="PromoBannerTooltip"/>
-						</block>
-					</copy>
-					<attrs>
-						<position insert="before" tag="bind" attr_1="name" value_1="catch" value_2="'onLostTop'"/>
-					</attrs>
-				</copy_past>
+### 4.2.3 Action `<replace>`
+```xml
+<replace>
+	<old tag="" attr_1="" value_1="".../>
+	...
+	<old tag="" attr_1="" value_1="".../>
+	<new>
+		<a_block_to_be_inserted_1/>
+		...
+		<a_block_to_be_inserted_n/>
+	</new>
+	<attrs>
+		...
+	</attrs>
+</replace>
+```
+Внутри `<replace>` находятся строки `<old>` и блок `<new>`
+В `<old>` перечисляются блоки, которые надо заменить.
+Внутри `<new>` - чем заменить.
+Например:
+```xml
+<root_Node>
+	<block className="ShipTreeElement">
+		<replace>
+			<old tag="bind" attr_1="name" value_1="action" value_2="'left_click'"/>
+			<old tag="bind" attr_1="name" value_1="menu" value_2="'ShipTreeMenu'"/>
+			<new>
+				<bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>
+				<bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>
+			</new>
+		</replace>
+	</block>
+</root_Node>
+```
+В блоке `<block className="ShipTreeElement">` ищутся
+```xml
+<bind name="action" value="'left_click'*"/>
+<bind name="menu" value="'ShipTreeMenu'*"/>
+```
+и меняются на
+```xml
+<bind name="action" value="'left_click';  'selectShipUpgrade' ; {shipId : shipId}"/>
+<bind name="menu" value="'ShipTreeMenu'; {shipId: shipId}"/>
+```
+Количество `<old>` и блоков внутри `<new>` не обязательно должны совпадать. Каждая `<old>` заменится на содержимое `<new>`
+
+Если необходимо заменить не одну, а все найденные строки, то можно использовать атрибут recursive.
+Например:
+```xml
+<root_Node>
+	<block className="SimpleUIListTeamResultRowRendererLeft">
+		<replace>
+			<old tag="height" value_2="28px" recursive="true"/>
+			<new>
+				<height value="30px"/>
+			</new>
+		</replace>
+	</block>
+</root_Node>
+```
+Заменит все `<height value="28px"/>`, найденные в `<block className="SimpleUIListTeamResultRowRendererLeft">`, на `<height value="30px"/>`
+
+### 4.2.4 Действие `<copy_past>`
+```xml
+<root_Node>
+	<основной_путь>
+		<copy_past>
+			<copy>
+				<путь>
+					<путь/>
+				</путь>
+				<путь>
+					<путь/>
+				</путь>
+			</copy>
+			<attrs>
+				...
+			</attrs>
+		</copy_past>
+	</основной_путь>
+</root_Node>
+```
+Внутри `<copy>` указывается путь (либо пути) к блоку (блокам), которые надо скопировать. Правила те же, что и для `<основной_путь>`,
+за исключением того, что корневой блок не `<root_Node>`, а `<copy>`.
+Всё скопированное будет вставлено в `<основной_путь>`, с поправкой на `<position>`, если она есть.
+Например:
+```xml
+<root_Node>
+	<block className="AccountLevelShortBanner">
+		<copy_past>
+			<copy>
+				<block className="AccountLevelBanner">
+					<find_node tag="block" attr_1="className" value_1="mc_blurmap_medium"/>
+				</block>
+			</copy>
+			<attrs>
+				<position insert="before_node" tag="bind" attr_1="name" value_1="catch" value_2="'onLostTop'">
+			</attrs>
+		</copy_past>
+	</block>
+</root_Node>
+```
+Скопирует из `<block className="AccountLevelBanner">`
+```xml
+<block className="mc_blurmap_medium" type="native">
+	<bind name="appear" value="'startShow'; 0.3; 0; {alpha: 0}; {alpha: 1}"/>
+	<bind name="appear" value="'startHide'; 0.15; 0; {alpha: 1}; {alpha: 0}"/>
+	<styleClass value="$FullsizeAbsolute"/>
+	<bind name="blurMap" value="0"/>
+</block>
+```
+и вставит его в `<block className="AccountLevelShortBanner">`, перед `<bind name="catch" value="'onLostTop'; { isOnTop: false }"/>`
+
+А такой вариант:
+```xml
+<root_Node>
+	<copy_past>
+		<copy>
+			<block className="AccountLevelBanner">
+				<find_node tag="block" attr_1="className" value_1="ShipExtendedTooltip"/>
 			</block>
-		</root_Node>
-		найдёт в <block className="AccountLevelBanner">
-		блок, содержащий <bind name="tooltip" value="'PromoBannerTooltip'; isShowPromoRewardBanner ? {} : null"/>
-		и вставит его в <block className="AccountLevelShortBanner">, перед <bind name="catch" value="'onLostTop'; { isOnTop: false }"/>
+		</copy>
+		<attrs>
+			<position insert="top">
+			<cut/>
+		</attrs>
+	</copy_past>
+</root_Node>
+```
+вырежет блок `<block className="ShipExtendedTooltip">` и вставит его в начало файла.
+```xml
+<root_Node>
+	<block className="AccountLevelShortBanner">
+		<copy_past>
+			<copy>
+				<block className="AccountLevelBanner">
+					<find_parent tag="bind" attr_1="name" value_1="tooltip" value_2="PromoBannerTooltip"/>
+				</block>
+			</copy>
+			<attrs>
+				<position insert="before" tag="bind" attr_1="name" value_1="catch" value_2="'onLostTop'"/>
+			</attrs>
+		</copy_past>
+	</block>
+</root_Node>
+```
+найдёт в `<block className="AccountLevelBanner">`
+блок, содержащий `<bind name="tooltip" value="'PromoBannerTooltip'; isShowPromoRewardBanner ? {} : null"/>`
+и вставит его в `<block className="AccountLevelShortBanner">`, перед `<bind name="catch" value="'onLostTop'; { isOnTop: false }"/>`
+```xml
+<target_File file="gui/unbound/mods/Roslich_loading_screen.xml" clear="true">
+	<root_Node>
+		<copy_past>
+			<copy>
+				<block className="BattleLoading"/>
+				<block className="BattleStats"/>
+				<block className="TeamBattleLoadingRightPanel"/>
+				<block className="TeamBattlePage"/>
+				<block className="UIlistTeamStructureRightTeamsRepeater"/>
+			</copy>
+			<attrs>
+				<copy_from file="gui/unbound/markup.xml" orig="true"/>
+				<rename attr_rename="className" old_value="TeamBattlePage" new_value="R_TeamBattlePage"/>
+			</attrs>
+		</copy_past>
+	</root_Node>
+</target_File>
+```
+Скопирует из оригинального markup.xml пять блоков, перечисленных в `<copy>`,
+вставит их в конец файла "gui/unbound/mods/Roslich_loading_screen.xml"
+и переименует `<block className="BattleStats"/>` в `<block className="R_TeamBattlePage"/>`
 
-		<target_File file="gui/unbound/mods/Roslich_loading_screen.xml" clear="true">
-			<root_Node>
-				<copy_past>
-					<copy>
-						<block className="BattleLoading"/>
-						<block className="BattleStats"/>
-						<block className="TeamBattleLoadingRightPanel"/>
-						<block className="TeamBattlePage"/>
-						<block className="UIlistTeamStructureRightTeamsRepeater"/>
-					</copy>
-					<attrs>
-						<copy_from file="gui/unbound/markup.xml" orig="true"/>
-						<rename attr_rename="className" old_value="TeamBattlePage" new_value="R_TeamBattlePage"/>
-					</attrs>
-				</copy_past>
-			<root_Node>
-		</target_File>
-		Скопирует из оригинального markup.xml пять блоков, перечисленных в <copy>,
-		вставит их в конец файла "gui/unbound/mods/Roslich_loading_screen.xml"
-		и переименует <block className="BattleStats"/> в <block className="R_TeamBattlePage"/>
-
-4.2.5	Действие <rename>
-
-		<rename tag="" attr_1="" value_1="".../>
-		Ищет блок (tag="" attr_1="" value_1=""...) и заменяет в значении attr_rename, old_value на new_value
-		Если old_value не указан, то attr_rename примет значение new_value
-		Если у блока (tag="" attr_1="" value_1=""...) нет атрибута attr_rename, то такой атрибут будет создан
-		например:
-		<root_Node>
-			<block className="TeamBattlePage">
-				<rename tag="bind" attr_1="name" value_1="instance" value_2="'421px'"  attr_rename="value" old_value="'421px'" new_value="'100%'" recursive="true"/>
-			</block>
-		</root_Node>
-		находит в <block className="BattleLoading"> все блоки <bind name="instance" value="blablabla _width: '421px' blablabla">, содержащие в атрибуте value строку '421px' и меняет в них '421px' на '100%'.
-		В итоге, вместо
-		<bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '421px', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
-		и
-		<bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '421px', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator }"/>
-		получаем
-		<bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '100%', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
-		<bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '100%', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator }"/>
-		
-		А вариант:
-		<root_Node>
-			<rename tag="element" attr_1="name" value_1="unboundShipsList" attr_rename="enabled" new_value="false"/>
-		</root_Node>
-		превратит строку
-		<element name="unboundShipsList" class="lesta.unbound2.UbElement" elementName="HeaderShipList" url="battle_stats.swf" autoPerfTestGroup="header">
-		в
-		<element name="unboundShipsList" class="lesta.unbound2.UbElement" elementName="HeaderShipList" url="battle_stats.swf" autoPerfTestGroup="header" enabled="false">
+### 4.2.5 Действие `<rename>`
+```xml
+<rename tag="" attr_1="" value_1="".../>
+```
+Ищет блок (`tag="" attr_1="" value_1=""...`) и заменяет в значении `attr_rename`, `old_value` на `new_value`
+Если `old_value` не указан, то `attr_rename` примет значение `new_value`
+Если у блока (`tag="" attr_1="" value_1=""...`) нет атрибута `attr_rename`, то такой атрибут будет создан
+например:
+```xml
+<root_Node>
+	<block className="TeamBattlePage">
+		<rename tag="bind" attr_1="name" value_1="instance" value_2="'421px'"  attr_rename="value" old_value="'421px'" new_value="'100%'" recursive="true"/>
+	</block>
+</root_Node>
+```
+находит в `<block className="BattleLoading">` все блоки `<bind name="instance" value="blablabla _width: '421px' blablabla">`, содержащие в атрибуте value строку `'421px'` и меняет в них `'421px'` на `'100%'`.
+В итоге, вместо
+```xml
+<bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '421px', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
+```
+и
+```xml
+<bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '421px', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator }"/>
+```
+получаем
+```xml
+<bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '100%', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
+<bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '100%', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator }"/>
+```
+А вариант:
+```xml
+<root_Node>
+	<rename tag="element" attr_1="name" value_1="unboundShipsList" attr_rename="enabled" new_value="false"/>
+</root_Node>
+```
+превратит строку
+```xml
+<element name="unboundShipsList" class="lesta.unbound2.UbElement" elementName="HeaderShipList" url="battle_stats.swf" autoPerfTestGroup="header">
+```
+в
+```xml
+<element name="unboundShipsList" class="lesta.unbound2.UbElement" elementName="HeaderShipList" url="battle_stats.swf" autoPerfTestGroup="header" enabled="false">
+```
