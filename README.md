@@ -291,135 +291,128 @@ Will take actions from `<block className="BattleStats">` only when there is a bl
 
 # 4. Actions
 
-Все действия ведутся относительно того блока, на котором в данный момент закончился <путь>
+All actions takes place relative to the block on which `<a_path>` has ended.
+Possible actions:
+- `<remove>` - Blocks removal
+- `<insert>` - Blocks addition
+- `<replace>` - Blocks replacement
+- `<rename>` - Rename attributes in existing blocks
+- `<copy_past>` - Copy or Move some blocks
 
-		Возможные действия:
-		<remove>		Удаление блоков
-		<insert>		Вставка блоков
-		<replace>		Замена блоков
-		<rename>		Переименование атрибутов существующих блоков
-		<copy_past>		Копирование, или перенос блоков
-		Действия выполняются в том порядке, в котором они находятся в файле.
+All actions execute in the order they appear in the file.
 
-		Структура действий:
-		<действие>
-			<данные_действия/>
-			...
-			<данные_действия/>
-			<attrs>
-				<атрибут/>
-				...
-				<атрибут/>
-			</attrs>
-		</действие>
+General structure:
+```xml
+<an_action>
+	<some_action_data>
+	...
+	</some_action_data>
+	<attrs>
+		<an_attribute/>
+		...
+		<an_attribute/>
+	</attrs>
+</an_action>
+```
 
-4.1		Атрибуты действия
+## 4.1 Action attributes
 
-		Внутри <attrs> можно перечислить следующие атрибуты:
-		<log_info value=""/>
-		<position insert="" tag="" attr_1="" value_1="" .../>
-		<default_position insert="" tag="" attr_1="" value_1="" .../>
-		<do_if_exist tag="" attr_1="" value_1="" .../>
-		<do_if_not_exist tag="" attr_1="" value_1="" .../>
-		<do_if_mod_installed mod=""/>
-		<do_if_mod_not_installed/>
-		<copy_from file="имя_файла" orig=""/>
-		<rename attr_rename="" old_value="" new_value=""/>
-		<cut/>
-		
-		<log_info/>
-		выводит в python.log сообщение, указанное в value="", во время выполнения этого <действие>
+Possible tags inside `<attrs>` are:
+- `<log_info value=""/>`
+- `<position insert="" tag="" attr_1="" value_1="" .../>`
+- `<default_position insert="" tag="" attr_1="" value_1="" .../>`
+- `<do_if_exist tag="" attr_1="" value_1="" .../>`
+- `<do_if_not_exist tag="" attr_1="" value_1="" .../>`
+- `<do_if_mod_installed mod=""/>`
+- `<do_if_mod_not_installed/>`
+- `<copy_from file="имя_файла" orig=""/>`
+- `<rename attr_rename="" old_value="" new_value=""/>`
+- `<cut/>`
 
-		<position/>
-		используется в <insert> и <copy_past> для указания места вставки.
-			в insert="" указывается позиция относительно найденного блока (tag="" attr_1="" value_1="" ...)
-			insert может быть:
-			before_node		перед найденным блоком
-			after_node		после найденного блока
-			before_parent	перед блоком, содержащим найденный блок
-			after_parent	после блока, содержащего найденный блок
-			top				в начало блока, на котором закончился путь
-			если <position/> нет, то вставка идёт в конец блока, на котором закончился путь.
+1. `<log_info/>` outputs a message from it's `value=""` attribute to the python.log file (useful for debug).
+2. `<position/>` used by `<insert>` and `<copy_past>` actions to specify action position.
+`insert=""` attribute contains a position relative to a block pointed by `tag=""`, `attr_1=""`, and `value_1=""`, etc.
+Possible values are:
+ - before_node - right before the block
+ - after_node - right after the block
+ - before_parent - before the parent of the block
+ - after_parent - after the parent of the block
+ - top - in the beginning of the block
+ - no `<position/>` specifed - the very end of the block
 
-		<default_position/>
-		используется там же, для указания места вставки, если <position/> не найдено.
-		Если не найдено ни <position/>, ни <default_position/>, то в лог выводится ошибка, и установка мода пропускается.
+3. `<default_position/>` is the same as `<position/>` and used in case there is no `<position/>` specified.
 
-		<do_if_exist/>
-		указывает, что это <действие> надо выполнять только в том случае, если найден блок, описанный этим атрибутом.
+ If there is no `<position/>` nor `<default_position/>` in the `<attrs>` element then an error is printed to the log and mod installation is skipped.
 
-		<do_if_not_exist/>
-		указывает, что это <действие> надо выполнять только в том случае, если не найден блок, описанный этим атрибутом.
-		Например можно использовать для того, чтобы вносить изменения в uss_settings.xml. Описываем в атрибуте строку,
-		которую собираемся внести в файл и тогда она будет вноситься только в том случае, если её ещё нет.
+4. `<do_if_exist/>` makes the action happen only when there is a block found which is described in this element.
 
-		<do_if_mod_installed/>
-		указывает, что это <действие> надо выполнять только в том случае, если мод mod="" установлен.
-		В mod="" указывается имя мода, которое было задано в <check/>
+5. `<do_if_not_exist/>` makes the action happen only when there is NO block found which is described in this element.
+This might be used to modify uss_settings.xml. Describe a string to be inserted only when it is not in the file yet.
 
-		<do_if_mod_not_installed/>
-		указывает, что это <действие> надо выполнять только в том случае, если мод mod="" не установлен.
-		В mod="" указывается имя мода, которое было задано в <check/>
+6. `<do_if_mod_installed/>` the action will take place only when speicific mod `mod=""` is installed. The `mod=""` attribute should contain mod name from a `<check/>` element.
 
-		<copy_from/>
-		используется в <copy_past>, для указания файла, из которого происходит копирование.
-		если <copy_from> нет, то копирование идёт из текущего файла. Если orig="true", то копирование будет произведено
-		из "чистого", распакованного из клиента файла. Если orig нет, то идёт попытка прочитать существующий файл,
-		если не получается, пытаемся распаковать из клиента. Если не получилось - ошибка в лог и пропуск установки мода.
+7. `<do_if_mod_not_installed/>` same as above but mod NON existsnce is checked.
 
-		<rename/>
-		используется в <copy_past>, для переименовывания значения атрибута вставляемого блока
-		где attr_rename - имя переименовываемого атрибута, old_value - старое значение, new_value - новое значение.
-		Если не задавать old_value, то атрибуту будет присвоено значение new_value.
+8. `<copy_from/>` used by `<copy_past>` element as a source file. If there is no `<copy_past>` element then current file is used as a source. If `orig="true"` attribute is present copy action will use original "clean" file from the game client. Otherwise we'll try to read current file and in case of failure we'll try to get from the game client. And if this fail an error will be logged and mod install will be skipped.
 
-		<cut/>
-		используется в <copy_past> в том случае, если надо не скопировать, а перенести блоки. Удаляет скопированный блок в источнике.
+9. `<rename/>` is used by `<copy_past>` element to change attribute value of a block being inserted. Where `attr_rename` - source attribute name, `old_value` - an old value, `new_value` - a new value. If there is no `old_value` attribute then attribute will be assigned  `new_value` value.
 
-		<log_info> и <position> можно указывать не в <attrs>, а напрямую в атрибутах <действие>
-		таким образом записи
-		<действие>
-			...
-			<attrs>
-				<log_info value="blablabla"/>
-				<position insert="" tag="" attr_1="" value_1="".../>
-			</attrs>
-		</действие>
-		и
-		<действие log_info="blablabla"  insert="" tag="" attr_1="" value_1=""...>
-			...
-		</действие>
-		равнозначны. Если <log_info> и <position> указаны одновременно и в <attrs> и в <действие>, приоритет будет у <attrs>
+10. `<cut/>` is used by `<copy_past>` element to move some blocks. Will remove copied source blocks.
 
-4.2		Виды действий
+`<log_info>` and `<position>` might be specified not only in `<attrs>` element but also as attributes of `<an_action>` element.
+Example:
+```xml
+<an_action>
+	...
+	<attrs>
+		<log_info value="blablabla"/>
+		<position insert="" tag="" attr_1="" value_1="".../>
+	</attrs>
+</an_action>
+```
+is equal to:
+```xml
+<an_action log_info="blablabla"  insert="" tag="" attr_1="" value_1=""...>
+	...
+</an_action>
+```
+If `<log_info>` and `<position>` are spicified in both `<attrs>` and in `<an_action>` then those from `<attrs>` element will take precedence.
 
-4.2.1	Действие <remove tag="" attr_1="" value_1=""...>
+## 4.2 Action types
 
-		удаляет найденный блок. Если надо удалить все найденные блоки, то указывается recursive="true"
-		Например:
-		<root_Node>
-			<block className="AccountLevelBannerWithPromo">
-				<remove tag="bind" attr_1="name" value_1="tooltip" value_2="'SlimClientStatusProfileTooltip'"/>
-			</block>
-		</root_Node>
-		удалит из <block className="AccountLevelBannerWithPromo">
-		строку <bind name="tooltip" value="'SlimClientStatusProfileTooltip'; slimClientData.isFull ? null : {}"/>
+### 4.2.1 Action `<remove tag="" attr_1="" value_1=""...>`
 
-		Такой вариант:
-		<root_Node>
-			<remove tag="block" attr_1="className" value_1="MinimapShipItem" recursive="true"/>
-			<remove tag="block" attr_1="className" value_1="BattleLoading" recursive="true" sub_nodes="false"/>
-		</root_Node>
-		удалит все блоки <block className="MinimapShipItem"> найденные во всём файле, а блоки <block className="BattleLoading">
-		только непосредственно из <ui/> и не будет искать их во вложенных блоках.
+Deletes found block. To delete all found blocks use `recursive="true"`
+Example 1:
+```xml
+<root_Node>
+	<block className="AccountLevelBannerWithPromo">
+		<remove tag="bind" attr_1="name" value_1="tooltip" value_2="'SlimClientStatusProfileTooltip'"/>
+	</block>
+</root_Node>
+```
+Will delete from `<block className="AccountLevelBannerWithPromo">` the string `<bind name="tooltip" value="'SlimClientStatusProfileTooltip'; slimClientData.isFull ? null : {}"/>`
 
-		<root_Node>
-			<block className="AccountLevelBannerWithPromo">
-				<find_parent tag="bind" attr_1="name" value_1="tooltip" value_2="'SlimClientStatusProfileTooltip'">
-					<remove/>
-				</find_parent>
-			</block>
-		</root_Node>
-		удалит целиком блок, содержащий <bind name="tooltip" value="'SlimClientStatusProfileTooltip'; slimClientData.isFull ? null : {}"/>
+Example 2:
+```xml
+<root_Node>
+	<remove tag="block" attr_1="className" value_1="MinimapShipItem" recursive="true"/>
+	<remove tag="block" attr_1="className" value_1="BattleLoading" recursive="true" sub_nodes="false"/>
+</root_Node>
+```
+Will delete all blocks `<block className="MinimapShipItem">` found in whole file, but blocks ` <block className="BattleLoading">` only from `<ui>` element without searching then in subelements.
+
+Example 3:
+```xml
+<root_Node>
+	<block className="AccountLevelBannerWithPromo">
+		<find_parent tag="bind" attr_1="name" value_1="tooltip" value_2="'SlimClientStatusProfileTooltip'">
+			<remove/>
+		</find_parent>
+	</block>
+</root_Node>
+```
+Will delete a whole block which contains `<bind name="tooltip" value="'SlimClientStatusProfileTooltip'; slimClientData.isFull ? null : {}"/>`
 
 4.2.2	Действие <insert>
 
