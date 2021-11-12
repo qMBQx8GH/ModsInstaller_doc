@@ -621,10 +621,11 @@ Also the element `<block className="BattleStats"/>` will be renamed to `<block c
 ```xml
 <rename tag="" attr_1="" value_1="".../>
 ```
-Ищет блок (tag="" attr_1="" value_1=""...) и заменяет в значении attr_rename, old_value на new_value
-Если old_value не указан, то attr_rename примет значение new_value
-Если у блока (tag="" attr_1="" value_1=""...) нет атрибута attr_rename, то такой атрибут будет создан
-например:
+Searches for (`tag="" attr_1="" value_1=""...`) and replaces the value of the attribute `attr_rename=""` an `old_value=""` to the `new_value=""`.
+If `old_value` if ommited then `attr_rename=""` attribute will be assigned with value of `new_value=""`.
+If element (`tag="" attr_1="" value_1=""...`) has no attribute `attr_rename=""` then such attribute will be added.
+
+Example 1:
 ```xml
 <root_Node>
 	<block className="TeamBattlePage">
@@ -632,31 +633,32 @@ Also the element `<block className="BattleStats"/>` will be renamed to `<block c
 	</block>
 </root_Node>
 ```
-находит в <block className="BattleLoading"> все блоки <bind name="instance" value="blablabla _width: '421px' blablabla">, содержащие в атрибуте value строку '421px' и меняет в них '421px' на '100%'.
-В итоге, вместо
+Searches `<block className="BattleLoading">` element for sub elements `<bind name="instance" value="blablabla _width: '421px' blablabla">` which have string `421px` in the `value` attribute and changes `421px` to `100%`.
+
+as a result
 ```xml
 <bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '421px', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
 ```
-и
+and
 ```xml
 <bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '421px', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator }"/>
 ```
-получаем
+will become
 ```xml
 <bind name="instance" value="'UIlistTeamStructureHeaderLeft'; {  _width: '100%', _isBattleStats: _isBattleStats, _allyPlayerEntityId: allies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator}"/>
 <bind name="instance" value="'UIlistTeamStructureHeaderRight'; { _width: '100%', _isBattleStats: _isBattleStats, _enemyPlayerEntityId: enemies[0].id,                 _battleType: battleType, _isSpectator: _isSpectator }"/>
 ```
-А вариант:
+Example 2:
 ```xml
 <root_Node>
 	<rename tag="element" attr_1="name" value_1="unboundShipsList" attr_rename="enabled" new_value="false"/>
 </root_Node>
 ```
-превратит строку
+will transform
 ```xml
 <element name="unboundShipsList" class="lesta.unbound2.UbElement" elementName="HeaderShipList" url="battle_stats.swf" autoPerfTestGroup="header">
 ```
-в
+into
 ```xml
 <element name="unboundShipsList" class="lesta.unbound2.UbElement" elementName="HeaderShipList" url="battle_stats.swf" autoPerfTestGroup="header" enabled="false">
 ```
