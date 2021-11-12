@@ -90,7 +90,7 @@ Example:
 ```xml
 <check name="campaigns_in_battle" version="1.0" dev="true"/>
 ```
-There are four debug levels from `debug="0"` to `debug="3"`. Default value for the debug is 0, when there is no `dev="true"` and is 3 otherwise.
+There are four debug levels from `debug="0"` to `debug="3"`. Default value for debug is 0, when there is no `dev="true"` and is 3 otherwise.
 
 In case the mode depends on others you may specify them in the ```<check>``` element and execute parts of your mod depending on other mods installation status.
 
@@ -622,7 +622,7 @@ Also the element `<block className="BattleStats"/>` will be renamed to `<block c
 <rename tag="" attr_1="" value_1="".../>
 ```
 Searches for (`tag="" attr_1="" value_1=""...`) and replaces the value of the attribute `attr_rename=""` an `old_value=""` to the `new_value=""`.
-If `old_value` if ommited then `attr_rename=""` attribute will be assigned with value of `new_value=""`.
+If `old_value` if omitted then `attr_rename=""` attribute will be assigned with value of `new_value=""`.
 If element (`tag="" attr_1="" value_1=""...`) has no attribute `attr_rename=""` then such attribute will be added.
 
 Example 1:
